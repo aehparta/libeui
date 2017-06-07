@@ -1,0 +1,89 @@
+# makfile configuration
+TARGET          = libeui.msp430
+
+TI_GCC_DIR          = /home/aehparta/ti/msp430_gcc
+TI_MSPWARE_DIR      = /home/aehparta/ti/msp/MSP430Ware_3_70_00_05
+TI_GRLIB_DIR        = $(TI_MSPWARE_DIR)/grlib/src/grlib
+TI_DRIVERLIB_DIR    = $(TI_MSPWARE_DIR)/driverlib/driverlib/MSP430F5xx_6xx
+
+MCU                 = msp430f5529
+MCLK_FREQ           = 24000000
+SMCLK_FREQ          = 24000000
+
+SOURCES         = \
+	examples/msp430/main.c \
+	examples/msp430/spi.c \
+	examples/msp430/SSD1289_Driver.c \
+	examples/fonts/fontfixed6x8.c \
+	examples/fonts/fontcm16.c \
+	examples/fonts/fontcm30.c \
+	$(TI_GRLIB_DIR)/display.c \
+	$(TI_GRLIB_DIR)/rectangle.c \
+	$(TI_GRLIB_DIR)/line.c \
+	$(TI_GRLIB_DIR)/context.c \
+	$(TI_DRIVERLIB_DIR)/wdt_a.c \
+	$(TI_DRIVERLIB_DIR)/pmm.c \
+	src/libeui.c \
+	src/eui_button.c \
+	src/eui_container.c \
+	src/eui_object.c \
+	src/eui_string.c \
+	src/eui_view.c \
+	src/eui_label.c \
+	src/eui_touch.c \
+	src/eui_image.c
+
+MAKE            = $(TI_GCC_DIR)/bin/make
+CC              = $(TI_GCC_DIR)/bin/msp430-elf-gcc
+OBJDUMP         = $(TI_GCC_DIR)/bin/msp430-elf-objdump
+OBJCOPY         = $(TI_GCC_DIR)/bin/msp430-elf-objcopy
+MAKETXT         = srec_cat
+
+INCLUDES        = -Isrc -I$(TI_GCC_DIR)/include -I$(TI_GRLIB_DIR) -I$(TI_DRIVERLIB_DIR)
+DEFINES         = -DLIBEUI_DRIVER_MSP_GRLIB -DMCLK_FREQ=$(MCLK_FREQ) -DSMCLK_FREQ=$(SMCLK_FREQ)
+
+CFLAGS = \
+	-mmcu=$(MCU) -O3 -Wall \
+	-fdata-sections -ffunction-sections \
+	-Wno-unused-variable -Wno-unused-function \
+	$(INCLUDES) $(DEFINES) \
+	-mlarge -mdata-region=lower -mcode-region=upper
+
+LDFLAGS = \
+	-mmcu=$(MCU) -Wl,--gc-sections \
+	-L$(TI_GCC_DIR)/include -Wl,-Map=$(TARGET).map \
+	-mlarge -mdata-region=lower -mcode-region=upper
+
+BUILDDIR        = ./.build.msp430
+
+
+# define object files from sources
+OBJECTS = $(SOURCES:%.c=$(BUILDDIR)/%.o)
+
+all: $(TARGET).elf $(TARGET).hex $(TARGET).txt
+
+$(TARGET).elf: $(OBJECTS)
+	@echo
+	@echo "Linking $@..."
+	@$(CC) $(OBJECTS) -o $@ $(LDFLAGS)
+	@echo "Build complete."
+	@echo
+
+-include $(OBJECTS:.o=.d)
+
+%.hex: %.elf
+	$(OBJCOPY) -O ihex $< $@
+
+%.txt: %.hex
+	$(MAKETXT) -O $@ -TITXT $< -I
+
+$(BUILDDIR)/%.o: %.c
+	@echo "Compiling $<..."
+	@mkdir -p `dirname $@`
+	@$(CC) $(CFLAGS) -MMD -c $< -o $@
+
+clean:
+	rm -rf $(BUILDDIR) $(TARGET)
+
+program:
+	msp430-tool bsl5.hid -eEPr $(TARGET).hex
