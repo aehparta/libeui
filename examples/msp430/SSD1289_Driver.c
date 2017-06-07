@@ -56,19 +56,19 @@
 // are suggested to be used to help implement the SSD1289_DriverPixelDraw()
 // function, but are not required. SetAddress() should be used by other pixel
 // level functions to help optimize them.
-// 
-// This is not an optimized driver however and will significantly impact 
+//
+// This is not an optimized driver however and will significantly impact
 // performance. It is highly recommended to first get the prototypes working
 // with the single pixel writes, and then go back and optimize the driver.
 // Please see application note www.ti.com/lit/pdf/slaa548 for more information
 // on how to fully optimize LCD driver files. In int16_t, driver optimizations
-// should take advantage of the auto-incrementing of the LCD controller. 
+// should take advantage of the auto-incrementing of the LCD controller.
 // This should be utilized so that a loop of WriteData() can be used instead
 // of a loop of SSD1289_DriverPixelDraw(). The pixel draw loop contains both a
-// SetAddress() + WriteData() compared to WriteData() alone. This is a big time 
+// SetAddress() + WriteData() compared to WriteData() alone. This is a big time
 // saver especially for the line draws and SSD1289_DriverPixelDrawMultiple.
 // More optimization can be done by reducing function calls by writing macros,
-// eliminating unnecessary instructions, and of course taking advantage of other 
+// eliminating unnecessary instructions, and of course taking advantage of other
 // features offered by the LCD controller. With so many pixels on an LCD screen
 // each instruction can have a large impact on total drawing time.
 //
@@ -107,11 +107,11 @@
 static void LCDReset()
 {
 	LCD_RESET_PORT |= LCD_RESET_PIN;
-    __delay_cycles(100000);
-    LCD_RESET_PORT &= ~LCD_RESET_PIN;
-    __delay_cycles(100000);
+	__delay_cycles(100000);
+	LCD_RESET_PORT &= ~LCD_RESET_PIN;
+	__delay_cycles(100000);
 	LCD_RESET_PORT |= LCD_RESET_PIN;
-    __delay_cycles(100000);
+	__delay_cycles(100000);
 }
 
 
@@ -119,17 +119,17 @@ static void LCDReset()
 static inline void WriteData(uint16_t usData)
 {
 #if DATA_PORT_WIDTH == 8
-    LCD_DATA_PORT = (usData >> 8); /* hight byte */
-    LCD_CMD_PORT &= ~(LCD_CMD_PORT_CS | LCD_CMD_PORT_WR);
-    LCD_CMD_PORT |= LCD_CMD_PORT_WR;
-    LCD_DATA_PORT = (usData & 0xff); /* low byte */
-    LCD_CMD_PORT &= ~LCD_CMD_PORT_WR;
-    LCD_CMD_PORT |= LCD_CMD_PORT_CS | LCD_CMD_PORT_RS | LCD_CMD_PORT_WR | LCD_CMD_PORT_RD;
+	LCD_DATA_PORT = (usData >> 8); /* hight byte */
+	LCD_CMD_PORT &= ~(LCD_CMD_PORT_CS | LCD_CMD_PORT_WR);
+	LCD_CMD_PORT |= LCD_CMD_PORT_WR;
+	LCD_DATA_PORT = (usData & 0xff); /* low byte */
+	LCD_CMD_PORT &= ~LCD_CMD_PORT_WR;
+	LCD_CMD_PORT |= LCD_CMD_PORT_CS | LCD_CMD_PORT_RS | LCD_CMD_PORT_WR | LCD_CMD_PORT_RD;
 #endif
 #if DATA_PORT_WIDTH == 16
-    LCD_DATA_PORT = usData;
-    LCD_CMD_PORT &= ~(LCD_CMD_PORT_CS | LCD_CMD_PORT_WR);
-    LCD_CMD_PORT |= LCD_CMD_PORT_CS | LCD_CMD_PORT_RS | LCD_CMD_PORT_WR | LCD_CMD_PORT_RD;
+	LCD_DATA_PORT = usData;
+	LCD_CMD_PORT &= ~(LCD_CMD_PORT_CS | LCD_CMD_PORT_WR);
+	LCD_CMD_PORT |= LCD_CMD_PORT_CS | LCD_CMD_PORT_RS | LCD_CMD_PORT_WR | LCD_CMD_PORT_RD;
 #endif
 }
 
@@ -138,32 +138,32 @@ static inline void WriteData(uint16_t usData)
 static inline void WriteCommand(uint8_t ucCommand)
 {
 #if DATA_PORT_WIDTH == 8
-    LCD_DATA_PORT = 0x00; /* hight byte */
-    LCD_CMD_PORT &= ~(LCD_CMD_PORT_CS | LCD_CMD_PORT_WR | LCD_CMD_PORT_RS);
-    LCD_CMD_PORT |= LCD_CMD_PORT_WR;
-    LCD_DATA_PORT = ucCommand; /* low byte */
-    LCD_CMD_PORT &= ~LCD_CMD_PORT_WR;
-    LCD_CMD_PORT |= LCD_CMD_PORT_CS | LCD_CMD_PORT_RS | LCD_CMD_PORT_WR | LCD_CMD_PORT_RD;
+	LCD_DATA_PORT = 0x00; /* hight byte */
+	LCD_CMD_PORT &= ~(LCD_CMD_PORT_CS | LCD_CMD_PORT_WR | LCD_CMD_PORT_RS);
+	LCD_CMD_PORT |= LCD_CMD_PORT_WR;
+	LCD_DATA_PORT = ucCommand; /* low byte */
+	LCD_CMD_PORT &= ~LCD_CMD_PORT_WR;
+	LCD_CMD_PORT |= LCD_CMD_PORT_CS | LCD_CMD_PORT_RS | LCD_CMD_PORT_WR | LCD_CMD_PORT_RD;
 #endif
 #if DATA_PORT_WIDTH == 16
-    LCD_DATA_PORT = ucCommand;
-    LCD_CMD_PORT &= ~(LCD_CMD_PORT_CS | LCD_CMD_PORT_WR | LCD_CMD_PORT_RS);
-    LCD_CMD_PORT |= LCD_CMD_PORT_CS | LCD_CMD_PORT_RS | LCD_CMD_PORT_WR | LCD_CMD_PORT_RD;
+	LCD_DATA_PORT = ucCommand;
+	LCD_CMD_PORT &= ~(LCD_CMD_PORT_CS | LCD_CMD_PORT_WR | LCD_CMD_PORT_RS);
+	LCD_CMD_PORT |= LCD_CMD_PORT_CS | LCD_CMD_PORT_RS | LCD_CMD_PORT_WR | LCD_CMD_PORT_RD;
 #endif
 }
 
 // Writes a command and data to the LCD controller
 static inline void WriteCommandAndData(uint8_t ucCommand, uint16_t usData)
 {
-    WriteCommand(ucCommand);
-    WriteData(usData);
+	WriteCommand(ucCommand);
+	WriteData(usData);
 }
 
 
 // Sets the pixel address of the LCD driver
 static void SetAddress(int16_t lX, int16_t lY)
 {
-    /* This function typically writes commands (using WriteCommand()) to the 
+	/* This function typically writes commands (using WriteCommand()) to the
 	LCD to tell it where to move the cursor for the next pixel to be drawn. */
 }
 
@@ -173,12 +173,12 @@ static void SetAddress(int16_t lX, int16_t lY)
 /** Sets the window where next data is to be drawn. */
 static void SetWindow(const tRectangle *pRect)
 {
-    WriteCommandAndData(0x44, (pRect->sYMax << 8) + pRect->sYMin);
-    WriteCommandAndData(0x45, pRect->sXMin);
-    WriteCommandAndData(0x46, pRect->sXMax);
-    WriteCommandAndData(0x4e, pRect->sYMin);
-    WriteCommandAndData(0x4f, pRect->sXMin);
-    WriteCommand(0x22);
+	WriteCommandAndData(0x44, (pRect->sYMax << 8) + pRect->sYMin);
+	WriteCommandAndData(0x45, pRect->sXMin);
+	WriteCommandAndData(0x46, pRect->sXMax);
+	WriteCommandAndData(0x4e, pRect->sYMin);
+	WriteCommandAndData(0x4f, pRect->sXMin);
+	WriteCommand(0x22);
 }
 
 
@@ -188,30 +188,30 @@ static void SetWindow(const tRectangle *pRect)
 // has been reset and is ready to receive command and data writes.
 static void InitGPIOLCDInterface(void)
 {
-    /* lcd reset pin */
-    LCD_RESET_PORT_DIR |= LCD_RESET_PIN;
-    LCD_RESET_PORT |= LCD_RESET_PIN;
+	/* lcd reset pin */
+	LCD_RESET_PORT_DIR |= LCD_RESET_PIN;
+	LCD_RESET_PORT |= LCD_RESET_PIN;
 
-    /* lcd backlight pin */
-    LCD_BACKLIGHT_PORT_DIR |= LCD_BACKLIGHT_PIN;
-    LCD_BACKLIGHT_PORT |= LCD_BACKLIGHT_PIN; /* as default, backlight off(!) */
-    
-    /* setup lcd control pins as outputs */
-    LCD_CMD_PORT_DIR |= LCD_CMD_PORT_CS | LCD_CMD_PORT_RS | LCD_CMD_PORT_WR | LCD_CMD_PORT_RD;
-    LCD_CMD_PORT |= LCD_CMD_PORT_CS | LCD_CMD_PORT_RS | LCD_CMD_PORT_WR | LCD_CMD_PORT_RD;
-    
-    /* setup lcd data pins as outputs */
+	/* lcd backlight pin */
+	LCD_BACKLIGHT_PORT_DIR |= LCD_BACKLIGHT_PIN;
+	LCD_BACKLIGHT_PORT |= LCD_BACKLIGHT_PIN; /* as default, backlight off(!) */
+
+	/* setup lcd control pins as outputs */
+	LCD_CMD_PORT_DIR |= LCD_CMD_PORT_CS | LCD_CMD_PORT_RS | LCD_CMD_PORT_WR | LCD_CMD_PORT_RD;
+	LCD_CMD_PORT |= LCD_CMD_PORT_CS | LCD_CMD_PORT_RS | LCD_CMD_PORT_WR | LCD_CMD_PORT_RD;
+
+	/* setup lcd data pins as outputs */
 #if DATA_PORT_WIDTH == 8
-    LCD_DATA_PORT_DIR = 0xff;
-    LCD_DATA_PORT = 0x00;
+	LCD_DATA_PORT_DIR = 0xff;
+	LCD_DATA_PORT = 0x00;
 #endif
 #if DATA_PORT_WIDTH == 16
-    LCD_DATA_PORT_DIR = 0xffff;
-    LCD_DATA_PORT = 0x0000;
+	LCD_DATA_PORT_DIR = 0xffff;
+	LCD_DATA_PORT = 0x0000;
 #endif
-    
-    /* reset lcd */
-    LCDReset();
+
+	/* reset lcd */
+	LCDReset();
 }
 
 
@@ -219,94 +219,97 @@ static void InitGPIOLCDInterface(void)
 // This function initializes the display buffer and discards any cached data.
 static void InitLCDDisplayBuffer(void *pvDisplayData, uint16_t ulValue)
 {
-/*	uint16_t i=0,j=0;
-	for(i =0; i< LCD_Y_SIZE; i++)
-	for(j =0; j< (LCD_X_SIZE * BPP + 7) / 8; j++)
-		Template_Memory[i * LCD_Y_SIZE + j] = ulValue;*/
+	/*  uint16_t i=0,j=0;
+	    for(i =0; i< LCD_Y_SIZE; i++)
+	    for(j =0; j< (LCD_X_SIZE * BPP + 7) / 8; j++)
+	        Template_Memory[i * LCD_Y_SIZE + j] = ulValue;*/
 }
 
 
 // Set backlight on/off
 void SSD1289_DriverBacklightSet(int on_off)
 {
-    if (on_off) { /* low is on */
-        LCD_BACKLIGHT_PORT &= ~LCD_BACKLIGHT_PIN;
-    } else { /* high is off */
-        LCD_BACKLIGHT_PORT |= LCD_BACKLIGHT_PIN;
-    }
+	if (on_off)   /* low is on */
+	{
+		LCD_BACKLIGHT_PORT &= ~LCD_BACKLIGHT_PIN;
+	}
+	else     /* high is off */
+	{
+		LCD_BACKLIGHT_PORT |= LCD_BACKLIGHT_PIN;
+	}
 }
 
 
 // Initializes the display driver.
 void SSD1289_DriverInit()
 {
-    InitGPIOLCDInterface();
+	InitGPIOLCDInterface();
 //    InitLCDDisplayBuffer();
 
-    /* configure lcd registers */
-    
-    WriteCommandAndData(0x00, 0x0001);
-    WriteCommandAndData(0x03, 0xaaac);
-    WriteCommandAndData(0x0C, 0x0004); 
-    __delay_cycles(50000);
-    WriteCommandAndData(0x0D, 0x000a);   
-    WriteCommandAndData(0x0E, 0x2c00);   
-    WriteCommandAndData(0x1E, 0x00B8);
-    __delay_cycles(50000);
+	/* configure lcd registers */
+
+	WriteCommandAndData(0x00, 0x0001);
+	WriteCommandAndData(0x03, 0xaaac);
+	WriteCommandAndData(0x0C, 0x0004);
+	__delay_cycles(50000);
+	WriteCommandAndData(0x0D, 0x000a);
+	WriteCommandAndData(0x0E, 0x2c00);
+	WriteCommandAndData(0x1E, 0x00B8);
+	__delay_cycles(50000);
 #ifdef LANDSCAPE
-    WriteCommandAndData(0x01, 0x6b3f);
-    WriteCommandAndData(0x11, 0x6830);
+	WriteCommandAndData(0x01, 0x6b3f);
+	WriteCommandAndData(0x11, 0x6830);
 #endif
 #ifdef LANDSCAPE_FLIP
-    WriteCommandAndData(0x01, 0x293f);
-    WriteCommandAndData(0x11, 0x6830);
+	WriteCommandAndData(0x01, 0x293f);
+	WriteCommandAndData(0x11, 0x6830);
 #endif
 #ifdef PORTRAIT
-    WriteCommandAndData(0x01, 0x2b3f);
-    WriteCommandAndData(0x11, 0x6830);
+	WriteCommandAndData(0x01, 0x2b3f);
+	WriteCommandAndData(0x11, 0x6830);
 #endif
 #ifdef PORTRAIT_FLIP
-    WriteCommandAndData(0x01, 0x693f);
-    WriteCommandAndData(0x11, 0x6830);
+	WriteCommandAndData(0x01, 0x693f);
+	WriteCommandAndData(0x11, 0x6830);
 #endif
-    WriteCommandAndData(0x02, 0x0600);
-    WriteCommandAndData(0x10, 0x0000);
-    __delay_cycles(50000);
-    WriteCommandAndData(0x05, 0x0000);
-    WriteCommandAndData(0x06, 0x0000);
-    WriteCommandAndData(0x16, 0xEF1C);
-    WriteCommandAndData(0x17, 0x0103);
-    WriteCommandAndData(0x07, 0x0233);
-    WriteCommandAndData(0x0B, 0x5312);
-    WriteCommandAndData(0x0F, 0x0000);
-    __delay_cycles(50000);
-    WriteCommandAndData(0x41, 0x0000);
-    WriteCommandAndData(0x42, 0x0000);
-    WriteCommandAndData(0x48, 0x0000);
-    WriteCommandAndData(0x49, 0x013f);
-    WriteCommandAndData(0x4A, 0x0000);
-    WriteCommandAndData(0x4B, 0x013f);
-    WriteCommandAndData(0x44, 0xEF00);
-    WriteCommandAndData(0x45, 0x0000);
-    WriteCommandAndData(0x46, 0x013F);
-    __delay_cycles(50000);
-    WriteCommandAndData(0x30, 0x0707);
-    WriteCommandAndData(0x31, 0x0704);
-    WriteCommandAndData(0x32, 0x0204);
-    WriteCommandAndData(0x33, 0x0201);
-    WriteCommandAndData(0x34, 0x0203);
-    WriteCommandAndData(0x35, 0x0204);
-    WriteCommandAndData(0x36, 0x0204);
-    WriteCommandAndData(0x37, 0x0502);
-    WriteCommandAndData(0x3A, 0x0302);
-    WriteCommandAndData(0x3B, 0x0500);
-    __delay_cycles(50000);
-    WriteCommandAndData(0x23, 0x0000);
-    WriteCommandAndData(0x24, 0x0000);
-    WriteCommandAndData(0x25, 0x8000);
-    WriteCommandAndData(0x4f, 0x0000);
-    WriteCommandAndData(0x4e, 0x0000);
-    __delay_cycles(50000);
+	WriteCommandAndData(0x02, 0x0600);
+	WriteCommandAndData(0x10, 0x0000);
+	__delay_cycles(50000);
+	WriteCommandAndData(0x05, 0x0000);
+	WriteCommandAndData(0x06, 0x0000);
+	WriteCommandAndData(0x16, 0xEF1C);
+	WriteCommandAndData(0x17, 0x0103);
+	WriteCommandAndData(0x07, 0x0233);
+	WriteCommandAndData(0x0B, 0x5312);
+	WriteCommandAndData(0x0F, 0x0000);
+	__delay_cycles(50000);
+	WriteCommandAndData(0x41, 0x0000);
+	WriteCommandAndData(0x42, 0x0000);
+	WriteCommandAndData(0x48, 0x0000);
+	WriteCommandAndData(0x49, 0x013f);
+	WriteCommandAndData(0x4A, 0x0000);
+	WriteCommandAndData(0x4B, 0x013f);
+	WriteCommandAndData(0x44, 0xEF00);
+	WriteCommandAndData(0x45, 0x0000);
+	WriteCommandAndData(0x46, 0x013F);
+	__delay_cycles(50000);
+	WriteCommandAndData(0x30, 0x0707);
+	WriteCommandAndData(0x31, 0x0704);
+	WriteCommandAndData(0x32, 0x0204);
+	WriteCommandAndData(0x33, 0x0201);
+	WriteCommandAndData(0x34, 0x0203);
+	WriteCommandAndData(0x35, 0x0204);
+	WriteCommandAndData(0x36, 0x0204);
+	WriteCommandAndData(0x37, 0x0502);
+	WriteCommandAndData(0x3A, 0x0302);
+	WriteCommandAndData(0x3B, 0x0500);
+	__delay_cycles(50000);
+	WriteCommandAndData(0x23, 0x0000);
+	WriteCommandAndData(0x24, 0x0000);
+	WriteCommandAndData(0x25, 0x8000);
+	WriteCommandAndData(0x4f, 0x0000);
+	WriteCommandAndData(0x4e, 0x0000);
+	__delay_cycles(50000);
 }
 
 
@@ -336,30 +339,30 @@ void SSD1289_DriverInit()
 //*****************************************************************************
 // TemplateDisplayFix
 static void SSD1289_DriverPixelDraw(void *pvDisplayData, int16_t lX, int16_t lY, uint16_t ulValue)
-{  
-    tRectangle rect;
-    
-    rect.sXMin = MAPPED_X(lX, lY);
-    rect.sXMax = MAPPED_X(lX, lY);
-    rect.sYMin = MAPPED_Y(lX, lY);
-    rect.sYMax = MAPPED_Y(lX, lY);
-    
-    SetWindow(&rect);
-    WriteData(ulValue);
+{
+	tRectangle rect;
 
-  /* This function already has checked that the pixel is within the extents of  
-  the LCD screen and the color ulValue has already been translated to the LCD.
-  This function typically looks like:
-  
-  // Interpret pixel data (if needed)
+	rect.sXMin = MAPPED_X(lX, lY);
+	rect.sXMax = MAPPED_X(lX, lY);
+	rect.sYMin = MAPPED_Y(lX, lY);
+	rect.sYMax = MAPPED_Y(lX, lY);
 
-  // Update buffer (if applicable)
-  // Template_Memory[lY * LCD_Y_SIZE + (lX * BPP / 8)] = , |= , &= ...
-  // Template memory must be modified at the bit level for 1/2/4BPP displays
+	SetWindow(&rect);
+	WriteData(ulValue);
 
-  // SetAddress(MAPPED_X(lX, lY), MAPPED_Y(lX, lY));
-  // WriteData(ulValue);
-  */
+	/* This function already has checked that the pixel is within the extents of
+	the LCD screen and the color ulValue has already been translated to the LCD.
+	This function typically looks like:
+
+	// Interpret pixel data (if needed)
+
+	// Update buffer (if applicable)
+	// Template_Memory[lY * LCD_Y_SIZE + (lX * BPP / 8)] = , |= , &= ...
+	// Template memory must be modified at the bit level for 1/2/4BPP displays
+
+	// SetAddress(MAPPED_X(lX, lY), MAPPED_Y(lX, lY));
+	// WriteData(ulValue);
+	*/
 }
 
 //*****************************************************************************
@@ -391,145 +394,145 @@ static void
 SSD1289_DriverPixelDrawMultiple(void *pvDisplayData, int16_t lX, int16_t lY, int16_t lX0, int16_t lCount, int16_t lBPP, const uint8_t *pucData, const uint32_t *pucPalette)
 {
 	uint16_t ulByte;
-    tRectangle rect;
-    
-    rect.sXMin = MAPPED_X(lX, lY);
-    rect.sXMax = MAPPED_X(lX, lY)  + lCount - 1;
-    rect.sYMin = MAPPED_Y(lX, lY);
-    rect.sYMax = MAPPED_Y(lX, lY);
-    
-    SetWindow(&rect);
+	tRectangle rect;
 
-    //
-    // Determine how to interpret the pixel data based on the number of bits
-    // per pixel.
-    //
-    switch(lBPP)
-    {
-        // The pixel data is in 1 bit per pixel format
-        case 1:
-        {
-            // Loop while there are more pixels to draw
-            while(lCount > 0)
-            {
-                // Get the next byte of image data
-                ulByte = *pucData++;
+	rect.sXMin = MAPPED_X(lX, lY);
+	rect.sXMax = MAPPED_X(lX, lY)  + lCount - 1;
+	rect.sYMin = MAPPED_Y(lX, lY);
+	rect.sYMax = MAPPED_Y(lX, lY);
 
-                // Loop through the pixels in this byte of image data
-                for(; (lX0 < 8) && lCount; lX0++, lCount--)
-                {
-                    WriteData(((uint16_t *)pucPalette)[(ulByte >> (7 - lX0)) & 1]);
-                    lX++;
-                    // Draw this pixel in the appropriate color
-					//SSD1289_DriverPixelDraw(pvDisplayData, lX++, lY, 
-					//						((uint16_t *)pucPalette)[(ulByte >> (7 - lX0)) & 1]);
-                }
-                
-                // Start at the beginning of the next byte of image data
-                lX0 = 0;
-            }
-            // The image data has been drawn
-            
-            break;
-        }
+	SetWindow(&rect);
 
-		// The pixel data is in 2 bit per pixel format
-        case 2:
-        {
-            // Loop while there are more pixels to draw
-            while(lCount > 0)
-            {
-                // Get the next byte of image data
-                ulByte = *pucData++;
+	//
+	// Determine how to interpret the pixel data based on the number of bits
+	// per pixel.
+	//
+	switch (lBPP)
+	{
+	// The pixel data is in 1 bit per pixel format
+	case 1:
+	{
+		// Loop while there are more pixels to draw
+		while (lCount > 0)
+		{
+			// Get the next byte of image data
+			ulByte = *pucData++;
 
-                // Loop through the pixels in this byte of image data
-                for(; (lX0 < 4) && lCount; lX0++, lCount--)
-                {
-                    WriteData(((uint16_t *)pucPalette)[(ulByte >> (6 - (lX0 << 1))) & 3]);
-                    lX++;
-                    // Draw this pixel in the appropriate color
-					//SSD1289_DriverPixelDraw(pvDisplayData, lX++, lY, 
-					//						((uint16_t *)pucPalette)[(ulByte >> (6 - (lX0 << 1))) & 3]);
-                }
-                
-                // Start at the beginning of the next byte of image data
-                lX0 = 0;
-            }
-            // The image data has been drawn
-            
-            break;
+			// Loop through the pixels in this byte of image data
+			for (; (lX0 < 8) && lCount; lX0++, lCount--)
+			{
+				WriteData(((uint16_t *)pucPalette)[(ulByte >> (7 - lX0)) & 1]);
+				lX++;
+				// Draw this pixel in the appropriate color
+				//SSD1289_DriverPixelDraw(pvDisplayData, lX++, lY,
+				//                      ((uint16_t *)pucPalette)[(ulByte >> (7 - lX0)) & 1]);
+			}
+
+			// Start at the beginning of the next byte of image data
+			lX0 = 0;
 		}
-        // The pixel data is in 4 bit per pixel format
-        case 4:
-        {
-            // Loop while there are more pixels to draw.  "Duff's device" is
-            // used to jump into the middle of the loop if the first nibble of
-            // the pixel data should not be used.  Duff's device makes use of
-            // the fact that a case statement is legal anywhere within a
-            // sub-block of a switch statement.  See
-            // http://en.wikipedia.org/wiki/Duff's_device for detailed
-            // information about Duff's device.
-            switch(lX0 & 1)
-            {
-                case 0:
-                  
-                    while(lCount)
-                    {
-                        // Get the upper nibble of the next byte of pixel data
-                        // and extract the corresponding entry from the palette
-                        ulByte = (*pucData >> 4);    
-                        ulByte = (*(uint16_t *)(pucPalette + ulByte));
-                        // Write to LCD screen
-                        WriteData(ulByte);
-                        lX++;
-                        //SSD1289_DriverPixelDraw(pvDisplayData, lX++, lY, ulByte);
-                        
-                        // Decrement the count of pixels to draw
-                        lCount--;
-                        
-                        // See if there is another pixel to draw
-                        if(lCount)
-                        {
-                case 1:
-                            // Get the lower nibble of the next byte of pixel
-                            // data and extract the corresponding entry from
-                            // the palette
-                            ulByte = (*pucData++ & 15);
-                            ulByte = (*(uint16_t *)(pucPalette + ulByte));
-                            // Write to LCD screen
-                            WriteData(ulByte);
-                            lX++;
-                            //SSD1289_DriverPixelDraw(pvDisplayData, lX++, lY, ulByte);
+		// The image data has been drawn
 
-                            // Decrement the count of pixels to draw
-                            lCount--;
-                        }
-                    }
-            }
-            // The image data has been drawn.
-           
-            break;
-        }
+		break;
+	}
 
-        // The pixel data is in 8 bit per pixel format
-        case 8:
-        {
-            // Loop while there are more pixels to draw
-            while(lCount--)
-            {
-                // Get the next byte of pixel data and extract the
-                // corresponding entry from the palette
-                ulByte = *pucData++;
-                ulByte = (*(uint16_t *)(pucPalette + ulByte));
-                // Write to LCD screen
-                WriteData(ulByte);
-                lX++;
-                //SSD1289_DriverPixelDraw(pvDisplayData, lX++, lY, ulByte);
-            }
-            // The image data has been drawn
-            break;
-        }
-    }
+	// The pixel data is in 2 bit per pixel format
+	case 2:
+	{
+		// Loop while there are more pixels to draw
+		while (lCount > 0)
+		{
+			// Get the next byte of image data
+			ulByte = *pucData++;
+
+			// Loop through the pixels in this byte of image data
+			for (; (lX0 < 4) && lCount; lX0++, lCount--)
+			{
+				WriteData(((uint16_t *)pucPalette)[(ulByte >> (6 - (lX0 << 1))) & 3]);
+				lX++;
+				// Draw this pixel in the appropriate color
+				//SSD1289_DriverPixelDraw(pvDisplayData, lX++, lY,
+				//                      ((uint16_t *)pucPalette)[(ulByte >> (6 - (lX0 << 1))) & 3]);
+			}
+
+			// Start at the beginning of the next byte of image data
+			lX0 = 0;
+		}
+		// The image data has been drawn
+
+		break;
+	}
+	// The pixel data is in 4 bit per pixel format
+	case 4:
+	{
+		// Loop while there are more pixels to draw.  "Duff's device" is
+		// used to jump into the middle of the loop if the first nibble of
+		// the pixel data should not be used.  Duff's device makes use of
+		// the fact that a case statement is legal anywhere within a
+		// sub-block of a switch statement.  See
+		// http://en.wikipedia.org/wiki/Duff's_device for detailed
+		// information about Duff's device.
+		switch (lX0 & 1)
+		{
+		case 0:
+
+			while (lCount)
+			{
+				// Get the upper nibble of the next byte of pixel data
+				// and extract the corresponding entry from the palette
+				ulByte = (*pucData >> 4);
+				ulByte = (*(uint16_t *)(pucPalette + ulByte));
+				// Write to LCD screen
+				WriteData(ulByte);
+				lX++;
+				//SSD1289_DriverPixelDraw(pvDisplayData, lX++, lY, ulByte);
+
+				// Decrement the count of pixels to draw
+				lCount--;
+
+				// See if there is another pixel to draw
+				if (lCount)
+				{
+				case 1:
+					// Get the lower nibble of the next byte of pixel
+					// data and extract the corresponding entry from
+					// the palette
+					ulByte = (*pucData++ & 15);
+					ulByte = (*(uint16_t *)(pucPalette + ulByte));
+					// Write to LCD screen
+					WriteData(ulByte);
+					lX++;
+					//SSD1289_DriverPixelDraw(pvDisplayData, lX++, lY, ulByte);
+
+					// Decrement the count of pixels to draw
+					lCount--;
+				}
+			}
+		}
+		// The image data has been drawn.
+
+		break;
+	}
+
+	// The pixel data is in 8 bit per pixel format
+	case 8:
+	{
+		// Loop while there are more pixels to draw
+		while (lCount--)
+		{
+			// Get the next byte of pixel data and extract the
+			// corresponding entry from the palette
+			ulByte = *pucData++;
+			ulByte = (*(uint16_t *)(pucPalette + ulByte));
+			// Write to LCD screen
+			WriteData(ulByte);
+			lX++;
+			//SSD1289_DriverPixelDraw(pvDisplayData, lX++, lY, ulByte);
+		}
+		// The image data has been drawn
+		break;
+	}
+	}
 }
 
 //*****************************************************************************
@@ -551,27 +554,28 @@ SSD1289_DriverPixelDrawMultiple(void *pvDisplayData, int16_t lX, int16_t lY, int
 //*****************************************************************************
 static void SSD1289_DriverLineDrawH(void *pvDisplayData, int16_t lX1, int16_t lX2, int16_t lY, uint16_t ulValue)
 {
-    tRectangle rect;
-    
-    rect.sXMin = MAPPED_X(lX1, lY);
-    rect.sXMax = MAPPED_X(lX2, lY);
-    rect.sYMin = MAPPED_Y(lX1, lY);
-    rect.sYMax = MAPPED_Y(lX2, lY);
-    
-    SetWindow(&rect);
+	tRectangle rect;
+
+	rect.sXMin = MAPPED_X(lX1, lY);
+	rect.sXMax = MAPPED_X(lX2, lY);
+	rect.sYMin = MAPPED_Y(lX1, lY);
+	rect.sYMax = MAPPED_Y(lX2, lY);
+
+	SetWindow(&rect);
 
 #if DATA_PORT_WIDTH == 16
-    LCD_DATA_PORT = ulValue;
+	LCD_DATA_PORT = ulValue;
 #endif
-    
-    for ( ; lX1 <= lX2; lX1++) {
+
+	for ( ; lX1 <= lX2; lX1++)
+	{
 #if DATA_PORT_WIDTH == 16
-        LCD_CMD_PORT = LCD_CMD_PORT & ~(LCD_CMD_PORT_CS | LCD_CMD_PORT_WR);
-        LCD_CMD_PORT = LCD_CMD_PORT | LCD_CMD_PORT_CS | LCD_CMD_PORT_RS | LCD_CMD_PORT_WR | LCD_CMD_PORT_RD;
+		LCD_CMD_PORT = LCD_CMD_PORT & ~(LCD_CMD_PORT_CS | LCD_CMD_PORT_WR);
+		LCD_CMD_PORT = LCD_CMD_PORT | LCD_CMD_PORT_CS | LCD_CMD_PORT_RS | LCD_CMD_PORT_WR | LCD_CMD_PORT_RD;
 #else
-        WriteData(ulValue);
+		WriteData(ulValue);
 #endif
-    }
+	}
 }
 
 //*****************************************************************************
@@ -593,27 +597,28 @@ static void SSD1289_DriverLineDrawH(void *pvDisplayData, int16_t lX1, int16_t lX
 //*****************************************************************************
 static void SSD1289_DriverLineDrawV(void *pvDisplayData, int16_t lX, int16_t lY1, int16_t lY2, uint16_t ulValue)
 {
-    tRectangle rect;
-    
-    rect.sXMin = MAPPED_X(lX, lY1);
-    rect.sXMax = MAPPED_X(lX, lY2);
-    rect.sYMin = MAPPED_Y(lX, lY1);
-    rect.sYMax = MAPPED_Y(lX, lY2);
-    
-    SetWindow(&rect);
+	tRectangle rect;
+
+	rect.sXMin = MAPPED_X(lX, lY1);
+	rect.sXMax = MAPPED_X(lX, lY2);
+	rect.sYMin = MAPPED_Y(lX, lY1);
+	rect.sYMax = MAPPED_Y(lX, lY2);
+
+	SetWindow(&rect);
 
 #if DATA_PORT_WIDTH == 16
-    LCD_DATA_PORT = ulValue;
+	LCD_DATA_PORT = ulValue;
 #endif
-    
-    for ( ; lY1 <= lY2; lY1++) {
+
+	for ( ; lY1 <= lY2; lY1++)
+	{
 #if DATA_PORT_WIDTH == 16
-        LCD_CMD_PORT = LCD_CMD_PORT & ~(LCD_CMD_PORT_CS | LCD_CMD_PORT_WR);
-        LCD_CMD_PORT = LCD_CMD_PORT | LCD_CMD_PORT_CS | LCD_CMD_PORT_RS | LCD_CMD_PORT_WR | LCD_CMD_PORT_RD;
+		LCD_CMD_PORT = LCD_CMD_PORT & ~(LCD_CMD_PORT_CS | LCD_CMD_PORT_WR);
+		LCD_CMD_PORT = LCD_CMD_PORT | LCD_CMD_PORT_CS | LCD_CMD_PORT_RS | LCD_CMD_PORT_WR | LCD_CMD_PORT_RD;
 #else
-        WriteData(ulValue);
+		WriteData(ulValue);
 #endif
-    }
+	}
 }
 
 //*****************************************************************************
@@ -635,30 +640,32 @@ static void SSD1289_DriverLineDrawV(void *pvDisplayData, int16_t lX, int16_t lY1
 //*****************************************************************************
 static void SSD1289_DriverRectFill(void *pvDisplayData, const tRectangle *pRect, uint16_t ulValue)
 {
-    int x, y;
-    tRectangle rect;
-    
-    rect.sXMin = MAPPED_X(pRect->sXMin, pRect->sYMin);
-    rect.sXMax = MAPPED_X(pRect->sXMax, pRect->sYMax);
-    rect.sYMin = MAPPED_Y(pRect->sXMin, pRect->sYMin);
-    rect.sYMax = MAPPED_Y(pRect->sXMax, pRect->sYMax);
+	int x, y;
+	tRectangle rect;
 
-    SetWindow(&rect);
+	rect.sXMin = MAPPED_X(pRect->sXMin, pRect->sYMin);
+	rect.sXMax = MAPPED_X(pRect->sXMax, pRect->sYMax);
+	rect.sYMin = MAPPED_Y(pRect->sXMin, pRect->sYMin);
+	rect.sYMax = MAPPED_Y(pRect->sXMax, pRect->sYMax);
+
+	SetWindow(&rect);
 
 #if DATA_PORT_WIDTH == 16
-    LCD_DATA_PORT = ulValue;
+	LCD_DATA_PORT = ulValue;
 #endif
 
-    for (y = 0; y <= (pRect->sYMax - pRect->sYMin); y++) {
-        for (x = 0; x <= (pRect->sXMax - pRect->sXMin); x++) {
+	for (y = 0; y <= (pRect->sYMax - pRect->sYMin); y++)
+	{
+		for (x = 0; x <= (pRect->sXMax - pRect->sXMin); x++)
+		{
 #if DATA_PORT_WIDTH == 16
-            LCD_CMD_PORT = LCD_CMD_PORT & ~(LCD_CMD_PORT_CS | LCD_CMD_PORT_WR);
-            LCD_CMD_PORT = LCD_CMD_PORT | LCD_CMD_PORT_CS | LCD_CMD_PORT_RS | LCD_CMD_PORT_WR | LCD_CMD_PORT_RD;
+			LCD_CMD_PORT = LCD_CMD_PORT & ~(LCD_CMD_PORT_CS | LCD_CMD_PORT_WR);
+			LCD_CMD_PORT = LCD_CMD_PORT | LCD_CMD_PORT_CS | LCD_CMD_PORT_RS | LCD_CMD_PORT_WR | LCD_CMD_PORT_RD;
 #else
-            WriteData(ulValue);
+			WriteData(ulValue);
 #endif
-        }
-    }
+		}
+	}
 }
 
 //*****************************************************************************
@@ -680,10 +687,10 @@ static void SSD1289_DriverRectFill(void *pvDisplayData, const tRectangle *pRect,
 //*****************************************************************************
 static uint32_t SSD1289_DriverColorTranslate(void *pvDisplayData, uint32_t  ulValue)
 {
-    //
-    // Translate from a 24-bit RGB color to a color accepted by the LCD.
-    //
-    return (DPYCOLORTRANSLATE(ulValue));
+	//
+	// Translate from a 24-bit RGB color to a color accepted by the LCD.
+	//
+	return (DPYCOLORTRANSLATE(ulValue));
 }
 
 //*****************************************************************************
@@ -702,12 +709,12 @@ static uint32_t SSD1289_DriverColorTranslate(void *pvDisplayData, uint32_t  ulVa
 //*****************************************************************************
 static void SSD1289_DriverFlush(void *pvDisplayData)
 {
-  // Flush Buffer here. This function is not needed if a buffer is not used,
-  // or if the buffer is always updated with the screen writes.
-/*	int16_t i=0,j=0;
-	for(i =0; i< LCD_Y_SIZE; i++)
-	for(j =0; j< (LCD_X_SIZE * BPP + 7) / 8; j++)
-		SSD1289_DriverPixelDraw(pvDisplayData, j, i, Template_Memory[i * LCD_Y_SIZE + j]);*/
+	// Flush Buffer here. This function is not needed if a buffer is not used,
+	// or if the buffer is always updated with the screen writes.
+	/*  int16_t i=0,j=0;
+	    for(i =0; i< LCD_Y_SIZE; i++)
+	    for(j =0; j< (LCD_X_SIZE * BPP + 7) / 8; j++)
+	        SSD1289_DriverPixelDraw(pvDisplayData, j, i, Template_Memory[i * LCD_Y_SIZE + j]);*/
 }
 
 //*****************************************************************************
@@ -725,14 +732,14 @@ static void SSD1289_DriverFlush(void *pvDisplayData)
 //*****************************************************************************
 static void SSD1289_DriverClearScreen(void *pvDisplayData, uint16_t ulValue)
 {
-    tRectangle rect;
-    
-    rect.sXMin = 0;
-    rect.sXMax = MAPPED_X(LCD_X_SIZE - 1, LCD_Y_SIZE - 1);
-    rect.sYMin = 0;
-    rect.sYMax = MAPPED_Y(LCD_X_SIZE - 1, LCD_Y_SIZE - 1);
-    
-    SSD1289_DriverRectFill(pvDisplayData, &rect, ulValue);
+	tRectangle rect;
+
+	rect.sXMin = 0;
+	rect.sXMax = MAPPED_X(LCD_X_SIZE - 1, LCD_Y_SIZE - 1);
+	rect.sYMin = 0;
+	rect.sYMax = MAPPED_Y(LCD_X_SIZE - 1, LCD_Y_SIZE - 1);
+
+	SSD1289_DriverRectFill(pvDisplayData, &rect, ulValue);
 }
 
 //*****************************************************************************
@@ -742,23 +749,23 @@ static void SSD1289_DriverClearScreen(void *pvDisplayData, uint16_t ulValue)
 //*****************************************************************************
 const Graphics_Display g_sSSD1289_Driver =
 {
-    sizeof(Graphics_Display),
-    0,
+	sizeof(Graphics_Display),
+	0,
 #if defined(PORTRAIT) || defined(PORTRAIT_FLIP)
-    LCD_Y_SIZE,
-    LCD_X_SIZE,
+	LCD_Y_SIZE,
+	LCD_X_SIZE,
 #else
-    LCD_X_SIZE,
-    LCD_Y_SIZE,
+	LCD_X_SIZE,
+	LCD_Y_SIZE,
 #endif
-    SSD1289_DriverPixelDraw,
-    SSD1289_DriverPixelDrawMultiple,
-    SSD1289_DriverLineDrawH,
-    SSD1289_DriverLineDrawV,
-    SSD1289_DriverRectFill,
-    SSD1289_DriverColorTranslate,
-    SSD1289_DriverFlush,
-    SSD1289_DriverClearScreen
+	SSD1289_DriverPixelDraw,
+	SSD1289_DriverPixelDrawMultiple,
+	SSD1289_DriverLineDrawH,
+	SSD1289_DriverLineDrawV,
+	SSD1289_DriverRectFill,
+	SSD1289_DriverColorTranslate,
+	SSD1289_DriverFlush,
+	SSD1289_DriverClearScreen
 };
 
 //*****************************************************************************

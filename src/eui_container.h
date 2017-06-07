@@ -1,8 +1,8 @@
- /*
- * ES5932517 firmware
- *
- * Copyright (c) Antti Partanen 2014
- */
+/*
+* ES5932517 firmware
+*
+* Copyright (c) Antti Partanen 2014
+*/
 
 #ifndef EUI_CONTAINER_H
 #define EUI_CONTAINER_H

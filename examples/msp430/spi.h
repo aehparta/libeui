@@ -1,4 +1,4 @@
- /*
+/*
  * ES5932517 firmware
  *
  * Copyright (c) Antti Partanen 2014
