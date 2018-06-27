@@ -7,14 +7,10 @@
 #ifndef EUILIB_H
 #define EUILIB_H
 
-
-/******************************************************************************/
 #ifdef _WIN32
 #include <stdio.h>
 #endif
 
-
-/******************************************************************************/
 /* color conversion macros */
 #define EUI_COLOR_16TO24(color) ((((color) & 0x7c00) << 9) | (((color) & 0x03e0) << 6) | (((color) & 0x001f) << 3))
 #define EUI_COLOR_24TO16(color) ((((color) & 0xf80000) >> 9) | (((color) & 0xf800) >> 6) | (((color) & 0xf8) >> 3)) 
@@ -23,13 +19,8 @@
 #define EUI_COLOR_G(color) (((color) & 0x3e0) >> 2)
 #define EUI_COLOR_B(color) (((color) & 0x1f) << 3)
 
+#include "eui_common.h"
 
-/******************************************************************************/
-#include "libeui_driver_msp_grlib.h"
-#include "libeui_driver_sdl2.h"
-
-
-/******************************************************************************/
 
 #define EUI_COORD_NONE                  0x7fff
 

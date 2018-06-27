@@ -1,8 +1,7 @@
 # makfile configuration
 TARGET          = libeui.msp430
 
-TI_GCC_DIR          = /home/aehparta/ti/msp430_gcc
-TI_MSPWARE_DIR      = /home/aehparta/ti/msp/MSP430Ware_3_70_00_05
+TI_MSPWARE_DIR      = /home/aehparta/ti/msp/MSP430Ware_3_80_04_05
 TI_GRLIB_DIR        = $(TI_MSPWARE_DIR)/grlib/src/grlib
 TI_DRIVERLIB_DIR    = $(TI_MSPWARE_DIR)/driverlib/driverlib/MSP430F5xx_6xx
 
@@ -33,10 +32,10 @@ SOURCES         = \
 	src/eui_touch.c \
 	src/eui_image.c
 
-MAKE            = $(TI_GCC_DIR)/bin/make
-CC              = $(TI_GCC_DIR)/bin/msp430-elf-gcc
-OBJDUMP         = $(TI_GCC_DIR)/bin/msp430-elf-objdump
-OBJCOPY         = $(TI_GCC_DIR)/bin/msp430-elf-objcopy
+MAKE            = make
+CC              = msp430-gcc
+OBJDUMP         = msp430-objdump
+OBJCOPY         = msp430-objcopy
 MAKETXT         = srec_cat
 
 INCLUDES        = -Isrc -I$(TI_GCC_DIR)/include -I$(TI_GRLIB_DIR) -I$(TI_DRIVERLIB_DIR)
@@ -46,8 +45,8 @@ CFLAGS = \
 	-mmcu=$(MCU) -O3 -Wall \
 	-fdata-sections -ffunction-sections \
 	-Wno-unused-variable -Wno-unused-function \
-	$(INCLUDES) $(DEFINES) \
-	-mlarge -mdata-region=lower -mcode-region=upper
+	$(INCLUDES) $(DEFINES)
+#	-mlarge -mdata-region=lower -mcode-region=upper
 
 LDFLAGS = \
 	-mmcu=$(MCU) -Wl,--gc-sections \
