@@ -1,0 +1,15 @@
+body {
+  padding-top: 65px;
+}
+
+footer {
+  margin-top: 50px;
+}
+
+.image-view {
+  max-width: 100%;
+}
+
+.image-original {
+  display: none;
+}

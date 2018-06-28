@@ -1,0 +1,201 @@
+<!DOCTYPE>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>
+      libeui tools
+    </title>
+    <link rel="stylesheet" href="css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="css/site.css"/>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+      <a class="navbar-brand" href="#">
+        libeui tools
+      </a>
+    </nav>
+    <main role="main" class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <input class="image-upload" type="file"/>
+        </div>
+        <div class="col">
+          <img class="image-view"  src="images/example.jpg"/>
+          <img class="image-original"  src="images/example.jpg"/>
+        </div>
+        <div class="col-4">
+          <div class="row filters">
+            <div class="col filter">
+              <label>
+                brightness
+              </label>
+              <div class="filter-setting">
+                <input type="range"  min="-100" max="100" step="1" value="0" data-filter="brightness"/>
+                <span class="filter-value">
+                  0
+                </span>
+              </div>
+            </div>
+            <div class="col filter">
+              <label>
+                contrast
+              </label>
+              <div class="filter-setting">
+                <input type="range"  min="-100" max="100" step="1" value="0" data-filter="contrast"/>
+                <span class="filter-value">
+                  0
+                </span>
+              </div>
+            </div>
+            <div class="col filter">
+              <label>
+                saturation
+              </label>
+              <div class="filter-setting">
+                <input type="range"  min="-100" max="100" step="1" value="0" data-filter="saturation"/>
+                <span class="filter-value">
+                  0
+                </span>
+              </div>
+            </div>
+            <div class="col filter">
+              <label>
+                vibrance
+              </label>
+              <div class="filter-setting">
+                <input type="range"  min="-100" max="100" step="1" value="0" data-filter="vibrance"/>
+                <span class="filter-value">
+                  0
+                </span>
+              </div>
+            </div>
+            <div class="col filter">
+              <label>
+                exposure
+              </label>
+              <div class="filter-setting">
+                <input type="range"  min="-100" max="100" step="1" value="0" data-filter="exposure"/>
+                <span class="filter-value">
+                  0
+                </span>
+              </div>
+            </div>
+            <div class="col filter">
+              <label>
+                hue
+              </label>
+              <div class="filter-setting">
+                <input type="range"  min="0" max="100" step="1" value="0" data-filter="hue"/>
+                <span class="filter-value">
+                  0
+                </span>
+              </div>
+            </div>
+            <div class="col filter">
+              <label>
+                sepia
+              </label>
+              <div class="filter-setting">
+                <input type="range"  min="0" max="100" step="1" value="0" data-filter="sepia"/>
+                <span class="filter-value">
+                  0
+                </span>
+              </div>
+            </div>
+            <div class="col filter">
+              <label>
+                gamma
+              </label>
+              <div class="filter-setting">
+                <input type="range"  min="0" max="10" step="0.1" value="0" data-filter="gamma"/>
+                <span class="filter-value">
+                  0
+                </span>
+              </div>
+            </div>
+            <div class="col filter">
+              <label>
+                noise
+              </label>
+              <div class="filter-setting">
+                <input type="range"  min="0" max="100" step="1" value="0" data-filter="noise"/>
+                <span class="filter-value">
+                  0
+                </span>
+              </div>
+            </div>
+            <div class="col filter">
+              <label>
+                clip
+              </label>
+              <div class="filter-setting">
+                <input type="range"  min="0" max="100" step="1" value="0" data-filter="clip"/>
+                <span class="filter-value">
+                  0
+                </span>
+              </div>
+            </div>
+            <div class="col filter">
+              <label>
+                sharpen
+              </label>
+              <div class="filter-setting">
+                <input type="range"  min="0" max="100" step="1" value="0" data-filter="sharpen"/>
+                <span class="filter-value">
+                  0
+                </span>
+              </div>
+            </div>
+            <div class="col filter">
+              <label>
+                stackBlur
+              </label>
+              <div class="filter-setting">
+                <input type="range"  min="0" max="20" step="1" value="0" data-filter="stackBlur"/>
+                <span class="filter-value">
+                  0
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+      <footer class="footer">
+        <div class="container-fluid">
+          <small class="text-muted">
+            <h3>
+              MIT License
+            </h3>
+            <p>
+              Copyright (c) 2018 Antti Partanen
+            </p>
+            <p>
+              Permission is hereby granted, free of charge, to any person obtaining a copy
+              of this software and associated documentation files (the "Software"), to deal
+              in the Software without restriction, including without limitation the rights
+              to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+              copies of the Software, and to permit persons to whom the Software is
+              furnished to do so, subject to the following conditions:
+            </p>
+            <p>
+              The above copyright notice and this permission notice shall be included in all
+              copies or substantial portions of the Software.
+            </p>
+            <p>
+              THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+              IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+              FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+              AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+              LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+              OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+              SOFTWARE.
+            </p>
+          </small>
+        </div>
+      </footer>
+      <script src="js/jquery-3.3.1.min.js"></script>
+      <script src="js/bootstrap.bundle.min.js"></script>
+      <script src="js/caman.full.min.js"></script>
+      <script src="js/site.js"></script>
+    </body>
+  </html>
